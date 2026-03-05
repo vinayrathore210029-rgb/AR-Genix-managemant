@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  role      String    // SUPER_ADMIN, ADMIN, EMPLOYEE, CLIENT
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  employee  Employee?
+  client    Client?
+}
+
+model Employee {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName   String
+  lastName    String
+  designation String
+  department  String?
+  joinDate    DateTime @default(now())
+  
+  tasksAssigned Task[] @relation("AssignedTasks")
+  attendance    Attendance[]
+}
+
+model Client {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyName String
+  contactName String
+  phone       String?
+  status      String   @default("Active")
+  
+  projects    Project[]
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  status      String   @default("Ongoing")
+  
+  tasks       Task[]
+}
+
+model Task {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  status      String      @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+  projectId   String?
+  project     Project?    @relation(fields: [projectId], references: [id])
+  assignedTo  String?
+  employee    Employee?   @relation("AssignedTasks", fields: [assignedTo], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Attendance {
+  id          String    @id @default(uuid())
+  employeeId  String
+  employee    Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  date        DateTime  @default(now())
+  checkIn     DateTime?
+  checkOut    DateTime?
+  breakStart  DateTime?
+  breakEnd    DateTime?
+  status      String    @default("Present")
+}
