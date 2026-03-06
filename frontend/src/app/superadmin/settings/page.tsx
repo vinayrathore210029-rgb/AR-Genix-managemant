@@ -15,7 +15,8 @@ import {
     CloudUpload,
     History,
     Key,
-    Save
+    Save,
+    Settings
 } from "lucide-react";
 import TopNavbar from "@/components/superadmin/TopNavbar";
 
@@ -42,8 +43,8 @@ export default function SettingsPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`w-full flex items-center gap-3 px-5 py-4 rounded-2xl transition-all ${activeTab === tab.id
-                                    ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
-                                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                                ? "bg-blue-500 text-white shadow-lg shadow-blue-500/20"
+                                : "text-slate-400 hover:text-white hover:bg-white/5"
                                 }`}
                         >
                             <tab.icon size={20} />
